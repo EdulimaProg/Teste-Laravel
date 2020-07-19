@@ -12,7 +12,7 @@
 */
 
 //Route for start page, Category page, Video register page
-Route::get('/index', 'VideoController@index');
+Route::get('/', 'VideoController@index');
 
 Route::get('/video/add', 'VideoController@add');
 
