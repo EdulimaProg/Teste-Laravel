@@ -10,111 +10,49 @@ use mysql_xdevapi\Exception;
 
 class CategoriaController extends Controller
 {
+    //list all category in add video menu
+    public function listar()
+    {
+        $dbResult = DB::table('category')->select('*')->get();
+
+        return response()->json($dbResult);
+    }
+
+    //save new category
     public function cadastro(Request $request)
     {
         //dd($request->all());
+        DB::table('category')->insert(
+            [
+                'categoryname' => $request->categoryname,
+                'categoryfav' => $request->fav == "false" ? false : true
+            ]
+        );
 
-        $arr = [];
-        try {
-            DB::table('category')->insert(
-                [
-                    'categoryname' => $request->categoryname,
-                    'categorydesc' => $request->categorydesc,
-                    'fav' => $request->fav
-                ]
-            );
-            array_push(
-                $arr,
-                [
-                    'code' => 200,
-                    'message' => 'Salvo com sucesso'
-                ]
-            );
-
-        }catch (QueryException $e){
-            if($e->getCode() == 23000){
-                array_push(
-                    $arr,
-                    [
-                        'code' => 401,
-                        'message' => 'Falha ao Salvar'
-                    ]
-                );
-            };
-        }
-
-        return response()->json($arr[0]);
+        return redirect()->back();
     }
-    public function atualizar(Request $request)
+
+    //route for list all category
+    public function toCategoryList($id)
     {
-        $arr = [];
+        $dbResult = DB::table('video')->select('*')
+            ->join('category', 'video.category_idcategory', '=', 'category.idcategory')
+            ->where('category.idcategory', $id)->get();
 
-        try {
-            DB::table('category')
-                ->where('id', $request->id)
-                ->update(
-                    [
-                        'categoryname' => $request->categoryname,
-                        'categorydesc' => $request->categorydesc,
-                        'fav' => $request->fav
-                    ]
-                );
-            array_push(
-                $arr,
-                [
-                    'code' => 200,
-                    'message' => 'Atualizado com sucesso'
-                ]
-            );
-        }catch (QueryException $e){
-            if($e->getCode() == 23000){
-                array_push(
-                    $arr,
-                    [
-                        'code' => 401,
-                        'message' => 'Falha ao Atualizar'
-                    ]
-                );
-            };
-        }
+        //dd($dbResult);
+
+        return view('category/category',['title'=> $dbResult[0]->categoryname,'list' => $dbResult]);
 
     }
-    public function excluir($id)
+
+    //list for list for all favorite category
+    public function toFavoriteCategory()
     {
-        $arr = [];
-        try {
-            $check = DB::table('category')->select('idcategory')->where('idcategory', $id)->get();
-            if ($check->isEmpty() == false){
-                DB::table('category')->where('idcategory', $id)->delete();
-                array_push(
-                    $arr,
-                    [
-                        'code' => 200,
-                        'message' => 'Excluido com sucesso'
-                    ]
-                );
-            }else{
-                array_push(
-                    $arr,
-                    [
-                        'code' => 400,
-                        'message' => 'O Valor Não Existe'
-                    ]
-                );
-            }
+        $dbResult = DB::table('video')
+            ->join('category', 'video.category_idcategory', '=', 'category.idcategory')
+            ->groupBy('category.idcategory')
+            ->get();
 
-
-        }catch (QueryException $e){
-            if($e->getCode() == 23000){
-                array_push(
-                    $arr,
-                    [
-                        'code' => 401,
-                        'message' => 'Falha ao Excluir'
-                    ]
-                );
-            };
-        }
-        return response()->json($arr);
     }
+
 }
