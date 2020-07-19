@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 
 class VideoController extends Controller
 {
+    //index to initial page
     public function index()
     {
 
