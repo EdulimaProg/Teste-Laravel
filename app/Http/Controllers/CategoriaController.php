@@ -46,13 +46,15 @@ class CategoriaController extends Controller
     }
 
     //list for list for all favorite category
-    public function toFavoriteCategory()
+    public function Categoryget($id)
     {
         $dbResult = DB::table('video')
+            ->select('videotitle','videourl')
             ->join('category', 'video.category_idcategory', '=', 'category.idcategory')
-            ->groupBy('category.idcategory')
+            ->where('video.category_idcategory', $id)
             ->get();
 
+        return response()->json($dbResult);
     }
 
 }
