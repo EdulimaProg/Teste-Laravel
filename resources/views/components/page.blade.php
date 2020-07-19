@@ -31,7 +31,7 @@
 <body>
     <header class="header">
         <nav class="navbar navbar-light caixa">
-            <a class="navbar-brand" href="{{env('APP_URL')}}">
+            <a class="navbar-brand" href="{{env('APP_URL')}} ">
                 <img src="https://i.ytimg.com/vi/y2-HNO1NEJM/maxresdefault.jpg" width="30" height="30" alt="">
             </a>
         </nav>
